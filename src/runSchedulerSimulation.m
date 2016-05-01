@@ -22,6 +22,13 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
 %                         (for which all priorities will be 0) and
 %                         'ascending' (for which priorities will go from 1
 %                         to numProcesses) are also available options
+%   simulationMode:     The mode for performing the simulation. Default is
+%                         'top' (recalculate timeslice vector on every
+%                         iteration); other options are 'topThird'
+%                         (recalculate once the top third of the timeslices
+%                         have been used) and 'threshold' (use timeslices
+%                         which are over a certain threshold, then
+%                         recalculate)
 %
 %   The process struct contains the following fields:
 %       count:          The total number of processes being simulated
@@ -55,6 +62,13 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
         priorityMode = 'random';
     end
     
+    % Set simulation mode
+    if nargin >= 6 && ~isempty(varargin{4})
+        simulationMode = varargin{4};
+    else
+        simulationMode = 'top';
+    end
+    
     % Generate process priorities
     if strcmp(priorityMode, 'uniform')
         priorities = zeros(numProcesses,1);
@@ -76,6 +90,20 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     procs.runTimes = zeros(numProcesses,1);
     
     % Run the simulation
+    if strcmp(simulationMode, 'top')
+        procs = sim_topResult(simulationLength, weight, length, procs);
+    elseif strcmp(simulationMode, 'topThird')
+        procs = sim_topThird(simulationLength, weight, length, procs);
+    elseif strcmp(simulationMode, 'threshold')
+        procs = sim_topThresh(simulationLength, weight, length, procs);
+    else
+        error('pvt_sched:runSchedulerSimulator:invalidSimulationMode', ...
+            'The specified simulation mode "%s" was not recognized', simulationMode);
+    end
+end
+
+
+function procs = sim_topResult(simulationLength, weight, length, procs)
     currTime = 0;
     while currTime < simulationLength
         % Solve for the best timeslice/associated process
@@ -97,3 +125,72 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     end
 end
 
+
+function procs = sim_topThird(simulationLength, weight, length, procs)
+    currTime = 0;
+    while currTime < simulationLength
+        % Solve for the best timeslice/associated process
+        timeslices = generateTimesliceVector(procs, currTime, weight, length);
+        
+        for i=1:(procs.count / 3)
+            [maxSlice, bestProc] = max(timeslices);
+            sliceTime = ceil(maxSlice);
+
+            % Update process timing values
+            currTime = currTime + sliceTime;
+            if currTime > simulationLength
+                sliceTime = sliceTime - (currTime - simulationLength);
+                currTime = simulationLength;
+            end
+            procs.lastRuns(bestProc) = currTime;
+
+            % Perform stat accounting
+            procs.numTimeSlices(bestProc) = procs.numTimeSlices(bestProc) + 1;
+            procs.runTimes(bestProc) = procs.runTimes(bestProc) + sliceTime;
+
+            if currTime > simulationLength
+                break;
+            end
+            
+            % Zero out the value to prevent reuse
+            timeslices(bestProc) = 0;
+        end
+    end
+end
+
+
+function procs = sim_topThresh(simulationLength, weight, length, procs)
+    currTime = 0;
+    thresh = length / procs.count;
+    while currTime < simulationLength
+        % Solve for the best timeslice/associated process
+        timeslices = generateTimesliceVector(procs, currTime, weight, length);
+        
+        while true
+            [maxSlice, bestProc] = max(timeslices);
+            sliceTime = ceil(maxSlice);
+            if sliceTime < thresh
+                break;
+            end
+
+            % Update process timing values
+            currTime = currTime + sliceTime;
+            if currTime > simulationLength
+                sliceTime = sliceTime - (currTime - simulationLength);
+                currTime = simulationLength;
+            end
+            procs.lastRuns(bestProc) = currTime;
+
+            % Perform stat accounting
+            procs.numTimeSlices(bestProc) = procs.numTimeSlices(bestProc) + 1;
+            procs.runTimes(bestProc) = procs.runTimes(bestProc) + sliceTime;
+
+            if currTime > simulationLength
+                break;
+            end
+            
+            % Zero out the value to prevent reuse
+            timeslices(bestProc) = 0;
+        end
+    end
+end
