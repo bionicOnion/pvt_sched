@@ -13,7 +13,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
 %                         be performed
 %   simulationLength:   The length (in milliseconds) of the simulation
 %   weight:             The weighting to be applied between process
-%                         liveness and priority (default is 0.25)
+%                         liveness and priority (default is 0.5)
 %   length:             The desired span covered for every calculation of
 %                         the timeslice vector (default is 100)
 %   priorityMode:       The mode for selecting process priorities. The
@@ -45,7 +45,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     if nargin >= 3 && ~isempty(varargin{1})
         weight = varargin{1};
     else
-        weight = 0.25;
+        weight = 0.5;
     end
     
     % Set timeslice vector target length
