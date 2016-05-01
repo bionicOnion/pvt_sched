@@ -31,15 +31,19 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
 %                         recalculate)
 %
 %   The process struct contains the following fields:
-%       count:          The total number of processes being simulated
-%       lastRuns:       The times at which the processes within the struct
-%                         finished their last timeslice (initialized to
-%                         zeros at the start of the simulation)
-%       priorities:     The scheduling priorities used in the simulation
-%       maxPriority:    The maximum value in the priorities vector
-%       numTimeSlices:  The total number of times that a given process has
-%                         been scheduled
-%       runTimes:        The total alloted running time for a given process
+%       count:              The total number of processes being simulated
+%       lastRuns:           The times at which the processes within the
+%                             struct finished their last timeslice
+%                             (initialized to zeros at the start of the
+%                             simulation)
+%       priorities:         The scheduling priorities used in the
+%                             simulation
+%       maxPriority:        The maximum value in the priorities vector
+%       numTimeSlices:      The total number of times that a given process
+%                             has been scheduled
+%       runTimes:           The total alloted running time for a given process
+%       numOptimizations:   The number of times that generateTimesliceVector
+%                             was called
 
     % Set scheduling weighting
     if nargin >= 3 && ~isempty(varargin{1})
@@ -88,6 +92,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     procs.maxPriority = max(priorities);
     procs.numTimeSlices = zeros(numProcesses,1);
     procs.runTimes = zeros(numProcesses,1);
+    procs.numOptimizations = 0;
     
     % Run the simulation
     if strcmp(simulationMode, 'top')
@@ -108,6 +113,7 @@ function procs = sim_topResult(simulationLength, weight, length, procs)
     while currTime < simulationLength
         % Solve for the best timeslice/associated process
         timeslices = generateTimesliceVector(procs, currTime, weight, length);
+        procs.numOptimizations = procs.numOptimizations + 1;
         [maxSlice, bestProc] = max(timeslices);
         sliceTime = ceil(maxSlice);
         
@@ -131,6 +137,7 @@ function procs = sim_topThird(simulationLength, weight, length, procs)
     while currTime < simulationLength
         % Solve for the best timeslice/associated process
         timeslices = generateTimesliceVector(procs, currTime, weight, length);
+        procs.numOptimizations = procs.numOptimizations + 1;
         
         for i=1:(procs.count / 3)
             [maxSlice, bestProc] = max(timeslices);
@@ -148,7 +155,7 @@ function procs = sim_topThird(simulationLength, weight, length, procs)
             procs.numTimeSlices(bestProc) = procs.numTimeSlices(bestProc) + 1;
             procs.runTimes(bestProc) = procs.runTimes(bestProc) + sliceTime;
 
-            if currTime > simulationLength
+            if currTime >= simulationLength
                 break;
             end
             
@@ -165,6 +172,7 @@ function procs = sim_topThresh(simulationLength, weight, length, procs)
     while currTime < simulationLength
         % Solve for the best timeslice/associated process
         timeslices = generateTimesliceVector(procs, currTime, weight, length);
+        procs.numOptimizations = procs.numOptimizations + 1;
         
         while true
             [maxSlice, bestProc] = max(timeslices);
@@ -185,7 +193,7 @@ function procs = sim_topThresh(simulationLength, weight, length, procs)
             procs.numTimeSlices(bestProc) = procs.numTimeSlices(bestProc) + 1;
             procs.runTimes(bestProc) = procs.runTimes(bestProc) + sliceTime;
 
-            if currTime > simulationLength
+            if currTime >= simulationLength
                 break;
             end
             
