@@ -57,7 +57,7 @@ function objVal = objectiveFunction(t, s, w, m, processes)
 %     making this an avenue for further research/development and user
 %     modification to the scheduler
 
-    prioritization = sum(processes.priorities.*abs(m - t)) / (m/processes.count);
+    prioritization = sum(processes.priorities.*abs(m - t)) / processes.maxPriority;
     responsiveness = sum((s - processes.lastRuns)./t);
     
     objVal = w*prioritization + (1-w)*responsiveness;

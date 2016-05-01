@@ -13,7 +13,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
 %                         be performed
 %   simulationLength:   The length (in milliseconds) of the simulation
 %   weight:             The weighting to be applied between process
-%                         priority and liveness (default is 0.25)
+%                         liveness and priority (default is 0.25)
 %   length:             The desired span covered for every calculation of
 %                         the timeslice vector (default is 100)
 %   priorityMode:       The mode for selecting process priorities. The
@@ -24,11 +24,12 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
 %                         to numProcesses) are also available options
 %
 %   The process struct contains the following fields:
-%       count: The total number of processes being simulated
+%       count:          The total number of processes being simulated
 %       lastRuns:       The times at which the processes within the struct
 %                         finished their last timeslice (initialized to
 %                         zeros at the start of the simulation)
 %       priorities:     The scheduling priorities used in the simulation
+%       maxPriority:    The maximum value in the priorities vector
 %       numTimeSlices:  The total number of times that a given process has
 %                         been scheduled
 %       runTimes:        The total alloted running time for a given process
@@ -70,6 +71,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     procs = struct('count', numProcesses);
     procs.lastRuns = zeros(numProcesses,1);
     procs.priorities = priorities;
+    procs.maxPriority = max(priorities);
     procs.numTimeSlices = zeros(numProcesses,1);
     procs.runTimes = zeros(numProcesses,1);
     
