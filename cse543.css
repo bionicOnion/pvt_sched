@@ -1,0 +1,49 @@
+body
+{
+  background-color: LightGray;
+  margin-left: 17.5%;
+  margin-right: 17.5%;
+}
+
+div.heading
+{
+  text-align: center;
+}
+
+figure
+{
+  text-align: center;
+  margin-left: 2.5%;
+  margin-right: 2.5%;
+  padding: 0;
+}
+
+figcaption
+{
+  font-style: italic;
+}
+
+h1, h2
+{
+  text-align: center;
+}
+
+hr
+{ 
+  border: 0;
+  width: 95%;
+  height: 1px;
+  color: #666;
+  background-color: #555;
+}
+
+hr.invisible
+{
+  color: LightGray;
+  background-color: LightGray;
+}
+
+img
+{
+  max-width: 50%;
+}

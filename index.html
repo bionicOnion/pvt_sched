@@ -1,0 +1,106 @@
+<!DOCTYPE HTML>
+
+<head>
+  <meta charset="UTF-8">
+  <title>PVT Scheduling</title>
+  <link rel="stylesheet" href="cse543.css">
+  <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+</head>
+<body>
+  <h1>Parameterized Optimization of Variable-Timeslice Process Scheduling</h1>
+  <h2>CSE 543T, Spring 2016: Final Project</h2>
+  <h2>Robert Miller</h2>
+
+  <div class="heading">
+    <a href="http://www.cse.wustl.edu/~ychen/CSE543/project.pdf">Project Guidelines</a>
+    ||
+    <a href="http://www.cse.wustl.edu/~ychen/CSE543/">Course Website</a>
+  </div>
+
+  <hr>
+
+  <!-- PROJECT OVERVIEW -->
+  <h3>Abstract</h3>
+  <p>
+    This paper discusses a proposed process scheduler which formulates
+    the problem of fair scheduling as a nonlinear optimization 
+    problem. This formulation allows for a great deal of flexibility
+    from the scheduler, including a significant potential for
+    customization through parameterization or through outright
+    modification of the objective function and associated constraints.
+    <br><br>
+    The proposed scheduler generates a vector of proposed timeslices for
+    some user-defined period which can then be used with a variety of
+    process-selection methodologies to choose the next process to be
+    scheduled. Between the parameterization, extensibility, and 
+    variability of selection techniques, this model can be tweaked to
+    fit the specific needs of a variety of systems or can be used to
+    mimic the behaviors of other schedulers.
+    <br><br>
+    The full paper can be found <a href="pvt_sched.pdf">here</a>. The
+    MATLAB framework used to test an implementation of this scheduler
+    can be found <a href="https://git.io/vwMBL">here</a>.
+  </p>
+
+  <hr>
+
+  <!-- RESULTS -->
+  <h3>Results</h3>
+
+  <p>
+    All of the results in this section appear in the attached paper
+    (found <a href="pvt_sched.pdf">here</a>) with explanation,
+    background, and analysis. They are presented here in their full
+    size.
+  </p>
+
+  <figure>
+    <a href="images/randTop.png">
+      <img src="images/randTop.png" alt="Random Priority, Top Value" />
+    </a>
+    <figcaption>Random priority processes/Top timeslice used</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/randTopThird.png">
+      <img src="images/randTopThird.png" alt="Random Priority, Top Third of Values" />
+    </a>
+    <figcaption>Random priority processes/Top third of timeslice used</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/randThresh.png">
+      <img src="images/randThresh.png" alt="Random Priority, Values above threshold" />
+    </a>
+    <figcaption>Random priority processes/Values above cutoff threshold used</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/uniform.png">
+      <img src="images/uniform.png" alt="Uniform Priority" />
+    </a>
+    <figcaption>Uniform priority processes</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/ascending.png">
+      <img src="images/ascending.png" alt="Ascending Priority" />
+    </a>
+    <figcaption>Ascending priority processes</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/weights.png">
+      <img src="images/weights.png" alt="Varied Weights" />
+    </a>
+    <figcaption>Results of varying weight parameter</figcaption>
+  </figure>
+
+  <figure>
+    <a href="images/lengths.png">
+      <img src="images/lengths.png" alt="Varied Timespan Length" />
+    </a>
+    <figcaption>Results of varying timespan length parameter</figcaption>
+  </figure>
+
+</body>
