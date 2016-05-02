@@ -75,7 +75,7 @@ function procs = runSchedulerSimulation(numProcesses, simulationLength, varargin
     
     % Generate process priorities
     if strcmp(priorityMode, 'uniform')
-        priorities = zeros(numProcesses,1);
+        priorities = ones(numProcesses,1);
     elseif strcmp(priorityMode, 'ascending')
         priorities = (1:numProcesses)';
     elseif strcmp(priorityMode, 'random')

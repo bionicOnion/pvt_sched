@@ -45,7 +45,7 @@ function [timeslices, unfairness] = generateTimesliceVector(processes, currTime,
     % Solve for the optimal timeslice values and report the value of the
     %   objective function (the unfairness of the selected schedule)
     options = optimset('Display', 'off');
-    [timeslices, unfairness] = fmincon(f, zeros(processes.count,1), [], [], eqA, eqB, ...
+    [timeslices, unfairness] = fmincon(f, ones(processes.count,1), [], [], eqA, eqB, ...
         zeros(1, processes.count), length*ones(1, processes.count), [], options);
 end
 
